@@ -8,7 +8,7 @@ declare module '*.vue' {
 
 declare module '@vue/runtime-core' {
   interface GlobalComponents {
-    WbBtn: typeof import('./src/components/WButton/WButton.vue')['default']
+    WbBtn: typeof import('./src/components/Button/Button.vue')['default']
   }
 }
 
