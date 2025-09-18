@@ -1,0 +1,551 @@
+.wb-btn {
+  margin: 0;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+  background: transparent;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  font-family: var(--wb-font-sans);
+  font-weight: var(--wb-font-medium);
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+  transition: all var(--wb-transition-fast);
+  outline: none;
+  overflow: hidden;
+}
+
+.wb-btn:focus-visible {
+  outline: 2px solid var(--wb-color-primary-500);
+  outline-offset: 2px;
+}
+
+.wb-btn:disabled,
+.wb-btn--disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.wb-btn--block {
+  display: flex;
+  width: 100%;
+}
+
+.wb-btn--icon-only {
+  padding: 0 !important;
+  aspect-ratio: 1;
+}
+
+.wb-btn--xs {
+  height: var(--wb-button-height-xs);
+  padding: 0 var(--wb-button-padding-x-xs);
+  font-size: var(--wb-text-xs);
+  gap: var(--wb-space-1);
+}
+
+.wb-btn--sm {
+  height: var(--wb-button-height-sm);
+  padding: 0 var(--wb-button-padding-x-sm);
+  font-size: var(--wb-text-sm);
+  gap: var(--wb-space-2);
+}
+
+.wb-btn--md {
+  height: var(--wb-button-height-md);
+  padding: 0 var(--wb-button-padding-x-md);
+  font-size: var(--wb-text-base);
+  gap: var(--wb-space-2);
+}
+
+.wb-btn--lg {
+  height: var(--wb-button-height-lg);
+  padding: 0 var(--wb-button-padding-x-lg);
+  font-size: var(--wb-text-lg);
+  gap: var(--wb-space-3);
+}
+
+.wb-btn--xl {
+  height: var(--wb-button-height-xl);
+  padding: 0 var(--wb-button-padding-x-xl);
+  font-size: var(--wb-text-xl);
+  gap: var(--wb-space-3);
+}
+
+.wb-btn--rounded {
+  border-radius: var(--wb-radius-md);
+}
+
+.wb-btn--rounded-sm {
+  border-radius: var(--wb-radius-sm);
+}
+
+.wb-btn--rounded-md {
+  border-radius: var(--wb-radius-md);
+}
+
+.wb-btn--rounded-lg {
+  border-radius: var(--wb-radius-lg);
+}
+
+.wb-btn--rounded-xl {
+  border-radius: var(--wb-radius-xl);
+}
+
+.wb-btn--rounded-2xl {
+  border-radius: var(--wb-radius-2xl);
+}
+
+.wb-btn--rounded-3xl {
+  border-radius: var(--wb-radius-3xl);
+}
+
+.wb-btn--rounded-full {
+  border-radius: var(--wb-radius-full);
+}
+
+.wb-btn--elevation-1 {
+  box-shadow: var(--wb-shadow-sm);
+}
+
+.wb-btn--elevation-2 {
+  box-shadow: var(--wb-shadow);
+}
+
+.wb-btn--elevation-3 {
+  box-shadow: var(--wb-shadow-md);
+}
+
+.wb-btn--elevation-4 {
+  box-shadow: var(--wb-shadow-lg);
+}
+
+.wb-btn--elevation-5 {
+  box-shadow: var(--wb-shadow-xl);
+}
+
+.wb-btn--elevation-1:hover,
+.wb-btn--elevation-2:hover,
+.wb-btn--elevation-3:hover,
+.wb-btn--elevation-4:hover,
+.wb-btn--elevation-5:hover {
+  transform: translateY(-1px);
+}
+
+.wb-btn--filled.wb-btn--primary {
+  background-color: var(--wb-color-primary-500);
+  color: var(--wb-color-on-primary);
+}
+
+.wb-btn--filled.wb-btn--primary:hover:not(:disabled) {
+  background-color: var(--wb-color-primary-600);
+}
+
+.wb-btn--filled.wb-btn--secondary {
+  background-color: var(--wb-color-secondary-500);
+  color: var(--wb-color-on-secondary);
+}
+
+.wb-btn--filled.wb-btn--secondary:hover:not(:disabled) {
+  background-color: var(--wb-color-secondary-600);
+}
+
+.wb-btn--filled.wb-btn--success {
+  background-color: var(--wb-color-success-500);
+  color: white;
+}
+
+.wb-btn--filled.wb-btn--success:hover:not(:disabled) {
+  background-color: var(--wb-color-success-700);
+}
+
+.wb-btn--filled.wb-btn--warning {
+  background-color: var(--wb-color-warning-500);
+  color: white;
+}
+
+.wb-btn--filled.wb-btn--warning:hover:not(:disabled) {
+  background-color: var(--wb-color-warning-700);
+}
+
+.wb-btn--filled.wb-btn--error {
+  background-color: var(--wb-color-error-500);
+  color: white;
+}
+
+.wb-btn--filled.wb-btn--error:hover:not(:disabled) {
+  background-color: var(--wb-color-error-700);
+}
+
+.wb-btn--tonal.wb-btn--primary {
+  background-color: var(--wb-color-primary-100);
+  color: var(--wb-color-primary-700);
+}
+
+.wb-btn--tonal.wb-btn--primary:hover:not(:disabled) {
+  background-color: var(--wb-color-primary-200);
+}
+
+.wb-btn--tonal.wb-btn--secondary {
+  background-color: var(--wb-color-secondary-100);
+  color: var(--wb-color-secondary-700);
+}
+
+.wb-btn--tonal.wb-btn--secondary:hover:not(:disabled) {
+  background-color: var(--wb-color-secondary-200);
+}
+
+.wb-btn--outlined {
+  border: 1px solid var(--wb-color-outline);
+  background-color: transparent;
+}
+
+.wb-btn--outlined.wb-btn--primary {
+  border-color: var(--wb-color-primary-500);
+  color: var(--wb-color-primary-500);
+}
+
+.wb-btn--outlined.wb-btn--primary:hover:not(:disabled) {
+  background-color: var(--wb-color-primary-50);
+}
+
+.wb-btn--outlined.wb-btn--secondary {
+  border-color: var(--wb-color-secondary-500);
+  color: var(--wb-color-secondary-500);
+}
+
+.wb-btn--outlined.wb-btn--secondary:hover:not(:disabled) {
+  background-color: var(--wb-color-secondary-50);
+}
+
+.wb-btn--text {
+  background-color: transparent;
+}
+
+.wb-btn--text.wb-btn--primary {
+  color: var(--wb-color-primary-500);
+}
+
+.wb-btn--text.wb-btn--primary:hover:not(:disabled) {
+  background-color: var(--wb-color-primary-50);
+}
+
+.wb-btn--text.wb-btn--secondary {
+  color: var(--wb-color-secondary-500);
+}
+
+.wb-btn--text.wb-btn--secondary:hover:not(:disabled) {
+  background-color: var(--wb-color-secondary-50);
+}
+
+.wb-btn--text.wb-btn--success {
+  color: var(--wb-color-success-500);
+}
+
+.wb-btn--text.wb-btn--success:hover:not(:disabled) {
+  background-color: var(--wb-color-success-50);
+}
+
+.wb-btn--text.wb-btn--warning {
+  color: var(--wb-color-warning-500);
+}
+
+.wb-btn--text.wb-btn--warning:hover:not(:disabled) {
+  background-color: var(--wb-color-warning-50);
+}
+
+.wb-btn--text.wb-btn--error {
+  color: var(--wb-color-error-500);
+}
+
+.wb-btn--text.wb-btn--error:hover:not(:disabled) {
+  background-color: var(--wb-color-error-50);
+}
+
+.wb-btn--elevated {
+  background-color: var(--wb-color-surface);
+  color: var(--wb-color-on-surface);
+  box-shadow: var(--wb-shadow);
+}
+
+.wb-btn--elevated:hover:not(:disabled) {
+  box-shadow: var(--wb-shadow-md);
+  transform: translateY(-1px);
+}
+
+.wb-btn--elevated.wb-btn--primary {
+  color: var(--wb-color-primary-500);
+}
+
+.wb-btn--elevated.wb-btn--secondary {
+  color: var(--wb-color-secondary-500);
+}
+
+.wb-btn__content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: inherit;
+  transition: opacity var(--wb-transition-fast);
+  position: relative;
+  z-index: 1;
+}
+
+.wb-btn__content--hidden {
+  opacity: 0;
+}
+
+.wb-btn__text {
+  display: flex;
+  align-items: center;
+}
+
+.wb-btn__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.wb-btn__icon--left {
+  margin-left: calc(var(--wb-space-1) * -1);
+}
+
+.wb-btn__icon--right {
+  margin-right: calc(var(--wb-space-1) * -1);
+}
+
+.wb-btn--xs .wb-btn__icon {
+  width: 12px;
+  height: 12px;
+  font-size: 12px;
+}
+
+.wb-btn--sm .wb-btn__icon {
+  width: 14px;
+  height: 14px;
+  font-size: 14px;
+}
+
+.wb-btn--md .wb-btn__icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+}
+
+.wb-btn--lg .wb-btn__icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+
+.wb-btn--xl .wb-btn__icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+}
+
+.wb-btn__loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--wb-space-2);
+  background-color: inherit;
+  opacity: 0;
+  transition: opacity var(--wb-transition-fast);
+  z-index: 2;
+}
+
+.wb-btn__loading-overlay--visible {
+  opacity: 1;
+}
+
+.wb-btn__spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wb-btn__spinner-icon {
+  width: 100%;
+  height: 100%;
+  animation: wb-spin 1s linear infinite;
+}
+
+.wb-btn__loading-text {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.wb-btn__ripple-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wb-btn__zones-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.wb-btn__click-zone {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.wb-btn__click-zone:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes wb-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.wb-btn--anim-scale {
+  --wb-btn-animation-duration: 150ms;
+}
+
+.wb-btn--anim-scale:active:not(:disabled) {
+  transform: scale(0.95);
+  transition-duration: var(--wb-btn-animation-duration);
+}
+
+.wb-btn--anim-pulse:active:not(:disabled) {
+  animation: wb-pulse var(--wb-btn-animation-duration, 150ms) ease-out;
+}
+
+@keyframes wb-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.wb-btn--anim-shake:active:not(:disabled) {
+  animation: wb-shake var(--wb-btn-animation-duration, 150ms) ease-out;
+}
+
+@keyframes wb-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  75% {
+    transform: translateX(2px);
+  }
+}
+
+.wb-btn--anim-bounce:active:not(:disabled) {
+  animation: wb-bounce var(--wb-btn-animation-duration, 150ms) ease-out;
+}
+
+@keyframes wb-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+[data-wb-theme="dark"] .wb-btn--outlined {
+  border-color: var(--wb-color-outline);
+}
+
+[data-wb-theme="dark"] .wb-btn--elevated {
+  background-color: var(--wb-color-surface-variant);
+  color: var(--wb-color-on-surface);
+}
+
+[data-wb-theme="dark"] .wb-btn--tonal.wb-btn--primary {
+  background-color: var(--wb-color-primary-900);
+  color: var(--wb-color-primary-200);
+}
+
+[data-wb-theme="dark"] .wb-btn--tonal.wb-btn--primary:hover:not(:disabled) {
+  background-color: var(--wb-color-primary-800);
+}
+
+[data-wb-theme="dark"] .wb-btn--text.wb-btn--primary:hover:not(:disabled) {
+  background-color: var(--wb-color-primary-900);
+}
+
+[data-wb-theme="dark"] .wb-btn--outlined.wb-btn--primary:hover:not(:disabled) {
+  background-color: var(--wb-color-primary-900);
+}
+
+@media (max-width: 640px) {
+  .wb-btn {
+    min-height: 44px;
+  }
+  .wb-btn--xs {
+    height: max(var(--wb-button-height-xs), 44px);
+  }
+  .wb-btn--sm {
+    height: max(var(--wb-button-height-sm), 44px);
+  }
+}
+
+@media (prefers-contrast: high) {
+  .wb-btn {
+    border: 2px solid transparent;
+  }
+  .wb-btn--filled {
+    border-color: currentColor;
+  }
+  .wb-btn--outlined {
+    border-width: 2px;
+  }
+  .wb-btn:focus-visible {
+    outline-width: 3px;
+    outline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wb-btn,
+  .wb-btn__content,
+  .wb-btn__loading-overlay,
+  .wb-btn__spinner-icon {
+    animation: none !important;
+    transition: none !important;
+  }
+  .wb-btn--anim-scale:active:not(:disabled),
+  .wb-btn--anim-pulse:active:not(:disabled),
+  .wb-btn--anim-shake:active:not(:disabled),
+  .wb-btn--anim-bounce:active:not(:disabled) {
+    transform: none !important;
+    animation: none !important;
+  }
+}
