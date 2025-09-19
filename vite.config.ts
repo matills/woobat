@@ -20,10 +20,11 @@ export default defineConfig({
       fileName: (format) => `woobat.${format}.js`
     },
     rollupOptions: {
-      external: ['vue'],
+      external: ['vue', 'lucide-vue-next'],
       output: {
         globals: {
-          vue: 'Vue'
+          'vue': 'Vue',
+          'lucide-vue-next': 'LucideVueNext'
         },
         assetFileNames: (assetInfo) => {
           if (assetInfo.name === 'style.css') {

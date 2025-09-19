@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'vue'
+import type { Ref, ComputedRef, CSSProperties } from 'vue'
 
 export interface WoobatOptions {
   prefix: string

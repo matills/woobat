@@ -14,6 +14,10 @@ export interface ButtonProps extends BaseComponentProps {
   variant?: ButtonVariant
   size?: ComponentSize
   color?: ColorVariant
+  customColor?: string
+  textColor?: string
+  borderColor?: string
+  iconColor?: string
   block?: boolean
   rounded?: BorderRadius
   elevation?: ElevationLevel
@@ -24,6 +28,7 @@ export interface ButtonProps extends BaseComponentProps {
   iconRight?: string
   iconOnly?: boolean
   padding?: string | number | 'none'
+  noPadding?: boolean
   tag?: 'button' | 'a' | 'router-link' | 'nuxt-link'
   href?: string
   target?: string
@@ -53,9 +58,10 @@ export interface ButtonSlots {
   iconLeft?: () => any
   iconRight?: () => any
   loading?: () => any
+  spinner?: () => any
 }
 
-export const defaultButtonProps: Required<Omit<ButtonProps, keyof BaseComponentProps | 'href' | 'target' | 'to' | 'clickZones' | 'loadingText' | 'iconLeft' | 'iconRight' | 'contentClass' | 'contentStyle'>> = {
+export const defaultButtonProps: Required<Omit<ButtonProps, keyof BaseComponentProps | 'href' | 'target' | 'to' | 'clickZones' | 'loadingText' | 'iconLeft' | 'iconRight' | 'contentClass' | 'contentStyle' | 'customColor' | 'textColor' | 'borderColor' | 'iconColor'>> = {
   variant: 'filled',
   size: 'md',
   color: 'primary',
@@ -66,6 +72,7 @@ export const defaultButtonProps: Required<Omit<ButtonProps, keyof BaseComponentP
   ripple: true,
   iconOnly: false,
   padding: 'auto',
+  noPadding: false,
   tag: 'button',
   type: 'button',
   detectQuadrant: false,

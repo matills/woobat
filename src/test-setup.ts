@@ -32,8 +32,15 @@ global.cancelAnimationFrame = vi.fn(id => clearTimeout(id))
 global.getComputedStyle = vi.fn(() => ({
   getPropertyValue: vi.fn(() => ''),
   setProperty: vi.fn(),
-  removeProperty: vi.fn()
-}))
+  removeProperty: vi.fn(),
+  accentColor: '',
+  alignContent: '',
+  alignItems: '',
+  alignSelf: '',
+  ...Object.fromEntries(
+    Array.from({ length: 500 }, (_, i) => [`prop${i}`, ''])
+  )
+})) as any
 
 const originalConsoleWarn = console.warn
 console.warn = (...args) => {

@@ -33,7 +33,13 @@
     "release": "npm run build && npm publish"
   },
   "peerDependencies": {
+    "lucide-vue-next": "^0.292.0",
     "vue": "^3.3.0"
+  },
+  "peerDependenciesMeta": {
+    "lucide-vue-next": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/node": "^20.5.2",
@@ -45,7 +51,9 @@
     "eslint": "^8.47.0",
     "eslint-plugin-vue": "^9.17.0",
     "jsdom": "^22.1.0",
+    "lucide-vue-next": "^0.544.0",
     "prettier": "^3.0.0",
+    "terser": "^5.44.0",
     "typescript": "~5.1.6",
     "vite": "^4.4.5",
     "vite-plugin-dts": "^3.5.3",

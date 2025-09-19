@@ -16,11 +16,6 @@
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
   >
-    <span
-      v-if="ripple && !disabled"
-      ref="rippleRef"
-      class="wb-btn__ripple-container"
-    ></span>
 
     <div
       v-if="loading"
@@ -29,31 +24,40 @@
     >
       <slot name="loader">
         <div class="wb-btn__spinner" :style="spinnerStyles">
-          <svg viewBox="0 0 24 24" class="wb-btn__spinner-icon">
-            <circle 
-              cx="12" 
-              cy="12" 
-              r="10" 
-              stroke="currentColor" 
-              stroke-width="2" 
-              fill="none"
-              stroke-dasharray="31.416"
-              stroke-dashoffset="31.416"
-            >
-              <animate
-                attributeName="stroke-dasharray"
-                dur="2s"
-                values="0 31.416;15.708 15.708;0 31.416"
-                repeatCount="indefinite"
+          <slot name="spinner">
+            <svg viewBox="0 0 24 24" class="wb-btn__spinner-icon wb-btn__spinner-icon--modern">
+              <circle 
+                cx="12" 
+                cy="12" 
+                r="9" 
+                stroke="currentColor" 
+                stroke-width="3" 
+                fill="none"
+                stroke-linecap="round"
+                stroke-dasharray="14.137 14.137"
+                opacity="0.25"
               />
-              <animate
-                attributeName="stroke-dashoffset"
-                dur="2s"
-                values="0;-15.708;-31.416"
-                repeatCount="indefinite"
-              />
-            </circle>
-          </svg>
+              <circle 
+                cx="12" 
+                cy="12" 
+                r="9" 
+                stroke="currentColor" 
+                stroke-width="3" 
+                fill="none"
+                stroke-linecap="round"
+                stroke-dasharray="14.137 14.137"
+                stroke-dashoffset="14.137"
+              >
+                <animateTransform
+                  attributeName="transform"
+                  dur="1s"
+                  type="rotate"
+                  values="0 12 12;360 12 12"
+                  repeatCount="indefinite"
+                />
+              </circle>
+            </svg>
+          </slot>
         </div>
       </slot>
       
@@ -67,9 +71,14 @@
       :class="[contentClass, { 'wb-btn__content--hidden': loading }]"
       :style="contentStyle"
     >
-      <span v-if="iconLeft || $slots.iconLeft" class="wb-btn__icon wb-btn__icon--left">
+      <span v-if="iconLeft || $slots.iconLeft" class="wb-btn__icon wb-btn__icon--left" :style="iconStyles">
         <slot name="iconLeft">
-          <i :class="iconLeft" />
+          <component 
+            v-if="isLucideIcon(iconLeft)"
+            :is="getLucideComponent(iconLeft)"
+            :size="getIconSize()"
+          />
+          <i v-else :class="iconLeft" />
         </slot>
       </span>
 
@@ -77,9 +86,14 @@
         <slot />
       </span>
 
-      <span v-if="iconRight || $slots.iconRight" class="wb-btn__icon wb-btn__icon--right">
+      <span v-if="iconRight || $slots.iconRight" class="wb-btn__icon wb-btn__icon--right" :style="iconStyles">
         <slot name="iconRight">
-          <i :class="iconRight" />
+          <component 
+            v-if="isLucideIcon(iconRight)"
+            :is="getLucideComponent(iconRight)"
+            :size="getIconSize()"
+          />
+          <i v-else :class="iconRight" />
         </slot>
       </span>
     </span>
@@ -119,6 +133,27 @@ import {
   buttonAnimationClasses
 } from './Button.types'
 
+let LucideIcons: any = null
+let lucideLoadPromise: Promise<any> | null = null
+
+function loadLucideIcons() {
+  if (LucideIcons !== null) return Promise.resolve(LucideIcons)
+  if (lucideLoadPromise) return lucideLoadPromise
+  
+  lucideLoadPromise = import('lucide-vue-next')
+    .then((icons) => {
+      LucideIcons = icons
+      return icons
+    })
+    .catch((e) => {
+      console.warn('Woobat UI: lucide-vue-next is not installed. Icon support will be limited to CSS classes.')
+      LucideIcons = false
+      return null
+    })
+  
+  return lucideLoadPromise
+}
+
 const props = withDefaults(defineProps<ButtonProps>(), defaultButtonProps)
 const emit = defineEmits<ButtonEmits>()
 defineSlots<ButtonSlots>()
@@ -126,11 +161,65 @@ defineSlots<ButtonSlots>()
 const buttonRef = ref<HTMLElement>()
 
 const { rippleRef, createRipple } = useRipple({
-  disabled: computed(() => !props.ripple || props.disabled || props.loading),
   color: 'currentColor',
   opacity: 0.2,
   duration: 400
 })
+
+function isLucideIcon(iconName?: string): boolean {
+  if (!iconName || LucideIcons === false) return false
+  
+  const hasPrefix = iconName.includes('fa-') || 
+                   iconName.includes('icon-') || 
+                   iconName.includes('material-') ||
+                   iconName.includes(' ') ||
+                   iconName.startsWith('.')
+  
+  if (hasPrefix) return false
+  
+  if (!LucideIcons) {
+    loadLucideIcons()
+    return false
+  }
+  
+  const pascalName = iconName.charAt(0).toUpperCase() + iconName.slice(1)
+  return !!(LucideIcons[pascalName] || LucideIcons[iconName])
+}
+
+function getLucideComponent(iconName?: string) {
+  if (!iconName || !LucideIcons || LucideIcons === false) return null
+  
+  const pascalName = iconName.charAt(0).toUpperCase() + iconName.slice(1)
+  return LucideIcons[pascalName] || LucideIcons[iconName] || null
+}
+
+function getIconSize(): number {
+  switch (props.size) {
+    case 'xs': return 12
+    case 'sm': return 14
+    case 'md': return 16
+    case 'lg': return 18
+    case 'xl': return 20
+    default: return 16
+  }
+}
+
+function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  hex = hex.replace('#', '')
+  
+  if (hex.length === 3) {
+    hex = hex.split('').map(char => char + char).join('')
+  }
+  
+  if (hex.length === 6) {
+    const r = parseInt(hex.substring(0, 2), 16)
+    const g = parseInt(hex.substring(2, 4), 16)
+    const b = parseInt(hex.substring(4, 6), 16)
+    return { r, g, b }
+  }
+  
+  return null
+}
 
 const computedTag = computed(() => {
   if (props.href) return 'a'
@@ -151,6 +240,7 @@ const buttonClasses = computed(() => {
   if (props.loading) classes.push('wb-btn--loading')
   if (props.block) classes.push('wb-btn--block')
   if (props.iconOnly) classes.push('wb-btn--icon-only')
+  if (props.noPadding) classes.push('wb-btn--no-padding')
   if (props.rounded === true) classes.push('wb-btn--rounded')
   else if (typeof props.rounded === 'string') classes.push(`wb-btn--rounded-${props.rounded}`)
   if (props.clickAnimation && props.clickAnimation !== 'none') classes.push(buttonAnimationClasses[props.clickAnimation])
@@ -168,10 +258,62 @@ const buttonClasses = computed(() => {
 
 const buttonStyles = computed(() => {
   const styles: CSSProperties = {}
-  if (props.padding === 'none') styles.padding = '0'
-  else if (props.padding !== 'auto' && props.padding) {
+  
+  if (props.noPadding || props.padding === 'none') {
+    styles.padding = '0'
+    styles.margin = '0'
+    styles.minWidth = 'auto'
+    styles.minHeight = 'auto'
+  } else if (props.padding !== 'auto' && props.padding) {
     styles.padding = typeof props.padding === 'number' ? `${props.padding}px` : props.padding
   }
+  
+  if (props.customColor) {
+    styles['--wb-btn-custom-color'] = props.customColor
+    
+    if (props.variant === 'elevated') {
+      styles.backgroundColor = props.customColor
+      if (!props.textColor) {
+        const rgb = hexToRgb(props.customColor)
+        if (rgb) {
+          const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000
+          styles.color = brightness > 128 ? '#000000' : '#ffffff'
+        } else {
+          styles.color = '#ffffff'
+        }
+      }
+    } else if (props.variant === 'text' || props.variant === 'outlined') {
+      styles.backgroundColor = 'transparent'
+      if (!props.textColor) {
+        styles.color = props.customColor
+      }
+      if (props.variant === 'outlined' && !props.borderColor) {
+        styles.borderColor = props.customColor
+      }
+    } else if (props.variant === 'tonal') {
+      styles.backgroundColor = `color-mix(in srgb, ${props.customColor} 12%, transparent)`
+      if (!props.textColor) {
+        styles.color = props.customColor
+      }
+    } else {
+      styles.backgroundColor = props.customColor
+      if (!props.borderColor) {
+        styles.borderColor = props.customColor
+      }
+    }
+  }
+  
+  if (props.textColor) {
+    styles.color = props.textColor
+  }
+  
+  if (props.borderColor) {
+    styles.borderColor = props.borderColor
+    if (props.variant !== 'outlined' && props.variant !== 'text') {
+      styles.border = `1px solid ${props.borderColor}`
+    }
+  }
+  
   if (props.animationDuration) styles['--wb-btn-animation-duration'] = `${props.animationDuration}ms`
   if (props.style) {
     if (typeof props.style === 'string') {
@@ -193,6 +335,14 @@ const spinnerStyles = computed(() => ({
           props.size === 'lg' ? '20px' :
           props.size === 'xl' ? '22px' : '16px'
 }))
+
+const iconStyles = computed(() => {
+  const styles: CSSProperties = {}
+  if (props.iconColor) {
+    styles.color = props.iconColor
+  }
+  return styles
+})
 
 function getZoneStyles(zone: ClickZone): CSSProperties {
   const [x, y, width, height] = zone.area
@@ -233,13 +383,11 @@ function handleClick(event: MouseEvent) {
     event.preventDefault()
     return
   }
-  if (props.ripple && rippleRef.value) {
-    const rect = buttonRef.value?.getBoundingClientRect()
-    if (rect) {
-      const x = event.clientX - rect.left
-      const y = event.clientY - rect.top
-      createRipple(x, y)
-    }
+  if (props.ripple && buttonRef.value) {
+    const rect = buttonRef.value.getBoundingClientRect()
+    const x = event.clientX - rect.left
+    const y = event.clientY - rect.top
+    createRipple(x, y)
   }
   emit('click', event)
   if (props.detectQuadrant || props.clickZones?.length) {
