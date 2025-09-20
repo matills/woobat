@@ -23,6 +23,8 @@ export interface ButtonProps extends BaseComponentProps {
   elevation?: ElevationLevel
   loading?: boolean
   loadingText?: string
+  showLoadingText?: boolean
+  preserveText?: boolean
   ripple?: boolean
   iconLeft?: string
   iconRight?: string
@@ -61,7 +63,7 @@ export interface ButtonSlots {
   spinner?: () => any
 }
 
-export const defaultButtonProps: Required<Omit<ButtonProps, keyof BaseComponentProps | 'href' | 'target' | 'to' | 'clickZones' | 'loadingText' | 'iconLeft' | 'iconRight' | 'contentClass' | 'contentStyle' | 'customColor' | 'textColor' | 'borderColor' | 'iconColor'>> = {
+export const defaultButtonProps: Required<Omit<ButtonProps, keyof BaseComponentProps | 'href' | 'target' | 'to' | 'clickZones' | 'loadingText' | 'iconLeft' | 'iconRight' | 'contentClass' | 'contentStyle' | 'customColor' | 'textColor' | 'borderColor' | 'iconColor' | 'showLoadingText' | 'preserveText'>> = {
   variant: 'filled',
   size: 'md',
   color: 'primary',
@@ -77,7 +79,9 @@ export const defaultButtonProps: Required<Omit<ButtonProps, keyof BaseComponentP
   type: 'button',
   detectQuadrant: false,
   clickAnimation: 'scale',
-  animationDuration: 150
+  animationDuration: 150,
+  showLoadingText: true,
+  preserveText: false
 }
 
 export const buttonSizeClasses = {

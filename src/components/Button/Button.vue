@@ -61,8 +61,8 @@
         </div>
       </slot>
       
-      <span v-if="loadingText || $slots.loading" class="wb-btn__loading-text">
-        <slot name="loading">{{ loadingText }}</slot>
+      <span v-if="shouldShowLoadingText" class="wb-btn__loading-text">
+        <slot name="loading">{{ displayLoadingText }}</slot>
       </span>
     </div>
 
@@ -115,7 +115,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, nextTick, watch } from 'vue'
+import { computed, ref, nextTick, watch, useSlots } from 'vue'
 import { useRipple } from '@/composables/useRipple'
 import type { CSSProperties } from 'vue'
 import type { 
@@ -156,6 +156,7 @@ function loadLucideIcons() {
 
 const props = withDefaults(defineProps<ButtonProps>(), defaultButtonProps)
 const emit = defineEmits<ButtonEmits>()
+const slots = useSlots()
 defineSlots<ButtonSlots>()
 
 const buttonRef = ref<HTMLElement>()
@@ -182,14 +183,22 @@ function isLucideIcon(iconName?: string): boolean {
     return false
   }
   
-  const pascalName = iconName.charAt(0).toUpperCase() + iconName.slice(1)
+  const pascalName = iconName
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join('')
+  
   return !!(LucideIcons[pascalName] || LucideIcons[iconName])
 }
 
 function getLucideComponent(iconName?: string) {
   if (!iconName || !LucideIcons || LucideIcons === false) return null
   
-  const pascalName = iconName.charAt(0).toUpperCase() + iconName.slice(1)
+  const pascalName = iconName
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join('')
+  
   return LucideIcons[pascalName] || LucideIcons[iconName] || null
 }
 
@@ -344,6 +353,16 @@ const iconStyles = computed(() => {
   return styles
 })
 
+const shouldShowLoadingText = computed(() => {
+  return props.showLoadingText && (props.loadingText || props.preserveText || slots.loading)
+})
+
+const displayLoadingText = computed(() => {
+  if (props.loadingText) return props.loadingText
+  if (props.preserveText) return slots.default?.()?.[0]?.children || ''
+  return ''
+})
+
 function getZoneStyles(zone: ClickZone): CSSProperties {
   const [x, y, width, height] = zone.area
   return {
@@ -383,7 +402,7 @@ function handleClick(event: MouseEvent) {
     event.preventDefault()
     return
   }
-  if (props.ripple && buttonRef.value) {
+  if (props.ripple && !props.noPadding && buttonRef.value) {
     const rect = buttonRef.value.getBoundingClientRect()
     const x = event.clientX - rect.left
     const y = event.clientY - rect.top
