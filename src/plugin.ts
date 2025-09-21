@@ -1,5 +1,6 @@
 import type { App, Plugin } from 'vue'
 import type { WoobatOptions } from './types/global'
+import { isBrowser } from './utils/domUtils'
 
 import Button from './components/Button/Button.vue'
 
@@ -19,7 +20,7 @@ export const WoobatUI: Plugin = {
   install(app: App, options: Partial<WoobatOptions> = {}) {
     const config = { ...defaultOptions, ...options }
 
-    if (typeof document !== 'undefined') {
+    if (isBrowser()) {
       document.documentElement.setAttribute('data-wb-theme', config.theme)
     }
 
@@ -37,19 +38,19 @@ export const WoobatUI: Plugin = {
 
     app.config.globalProperties.$woobat = {
       setTheme(theme: 'light' | 'dark') {
-        if (typeof document !== 'undefined') {
+        if (isBrowser()) {
           document.documentElement.setAttribute('data-wb-theme', theme)
         }
       },
       getTheme() {
-        if (typeof document !== 'undefined') {
+        if (isBrowser()) {
           return document.documentElement.getAttribute('data-wb-theme') || 'light'
         }
         return 'light'
       }
     }
 
-    if (typeof document !== 'undefined' && !document.querySelector('[data-woobat-styles]')) {
+    if (isBrowser() && !document.querySelector('[data-woobat-styles]')) {
       const link = document.createElement('link')
       link.rel = 'stylesheet'
       link.href = '/node_modules/woobat-ui/dist/woobat.css'

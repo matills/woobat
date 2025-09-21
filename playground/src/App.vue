@@ -130,7 +130,6 @@ body {
     margin-left: 0;
   }
   
-  /* Opcional: mostrar sidebar en mobile con toggle */
   .sidebar-nav.mobile-open {
     transform: translateX(0);
   }

@@ -115,343 +115,49 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, nextTick, watch, useSlots } from 'vue'
-import { useRipple } from '@/composables/useRipple'
-import type { CSSProperties } from 'vue'
+import { useSlots } from 'vue'
 import type { 
   ButtonProps, 
   ButtonEmits,
   ButtonSlots
 } from './Button.types'
-import type { AdvancedClickEvent, ClickZone } from '@/types/global'
-import {
-  defaultButtonProps,
-  buttonSizeClasses,
-  buttonVariantClasses,
-  buttonColorClasses,
-  buttonElevationClasses,
-  buttonAnimationClasses
-} from './Button.types'
-
-let LucideIcons: any = null
-let lucideLoadPromise: Promise<any> | null = null
-
-function loadLucideIcons() {
-  if (LucideIcons !== null) return Promise.resolve(LucideIcons)
-  if (lucideLoadPromise) return lucideLoadPromise
-  
-  lucideLoadPromise = import('lucide-vue-next')
-    .then((icons) => {
-      LucideIcons = icons
-      return icons
-    })
-    .catch((e) => {
-      console.warn('Woobat UI: lucide-vue-next is not installed. Icon support will be limited to CSS classes.')
-      LucideIcons = false
-      return null
-    })
-  
-  return lucideLoadPromise
-}
+import { defaultButtonProps } from './Button.types'
+import { useButton } from './useButton'
 
 const props = withDefaults(defineProps<ButtonProps>(), defaultButtonProps)
 const emit = defineEmits<ButtonEmits>()
 const slots = useSlots()
 defineSlots<ButtonSlots>()
 
-const buttonRef = ref<HTMLElement>()
-
-const { rippleRef, createRipple } = useRipple({
-  color: 'currentColor',
-  opacity: 0.2,
-  duration: 400
-})
-
-function isLucideIcon(iconName?: string): boolean {
-  if (!iconName || LucideIcons === false) return false
-  
-  const hasPrefix = iconName.includes('fa-') || 
-                   iconName.includes('icon-') || 
-                   iconName.includes('material-') ||
-                   iconName.includes(' ') ||
-                   iconName.startsWith('.')
-  
-  if (hasPrefix) return false
-  
-  if (!LucideIcons) {
-    loadLucideIcons()
-    return false
-  }
-  
-  const pascalName = iconName
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join('')
-  
-  return !!(LucideIcons[pascalName] || LucideIcons[iconName])
-}
-
-function getLucideComponent(iconName?: string) {
-  if (!iconName || !LucideIcons || LucideIcons === false) return null
-  
-  const pascalName = iconName
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join('')
-  
-  return LucideIcons[pascalName] || LucideIcons[iconName] || null
-}
-
-function getIconSize(): number {
-  switch (props.size) {
-    case 'xs': return 12
-    case 'sm': return 14
-    case 'md': return 16
-    case 'lg': return 18
-    case 'xl': return 20
-    default: return 16
-  }
-}
-
-function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
-  hex = hex.replace('#', '')
-  
-  if (hex.length === 3) {
-    hex = hex.split('').map(char => char + char).join('')
-  }
-  
-  if (hex.length === 6) {
-    const r = parseInt(hex.substring(0, 2), 16)
-    const g = parseInt(hex.substring(2, 4), 16)
-    const b = parseInt(hex.substring(4, 6), 16)
-    return { r, g, b }
-  }
-  
-  return null
-}
-
-const computedTag = computed(() => {
-  if (props.href) return 'a'
-  return props.tag
-})
-
-const isRouterLink = computed(() => {
-  return ['router-link', 'nuxt-link'].includes(props.tag)
-})
-
-const buttonClasses = computed(() => {
-  const classes = ['wb-btn']
-  if (props.size) classes.push(buttonSizeClasses[props.size])
-  if (props.variant) classes.push(buttonVariantClasses[props.variant])
-  if (props.color) classes.push(buttonColorClasses[props.color])
-  if (props.elevation && props.elevation > 0) classes.push(buttonElevationClasses[props.elevation])
-  if (props.disabled) classes.push('wb-btn--disabled')
-  if (props.loading) classes.push('wb-btn--loading')
-  if (props.block) classes.push('wb-btn--block')
-  if (props.iconOnly) classes.push('wb-btn--icon-only')
-  if (props.noPadding) classes.push('wb-btn--no-padding')
-  if (props.rounded === true) classes.push('wb-btn--rounded')
-  else if (typeof props.rounded === 'string') classes.push(`wb-btn--rounded-${props.rounded}`)
-  if (props.clickAnimation && props.clickAnimation !== 'none') classes.push(buttonAnimationClasses[props.clickAnimation])
-  if (props.class) {
-    if (Array.isArray(props.class)) classes.push(...props.class)
-    else if (typeof props.class === 'string') classes.push(props.class)
-    else {
-      Object.entries(props.class).forEach(([key, value]) => {
-        if (value) classes.push(key)
-      })
-    }
-  }
-  return classes
-})
-
-const buttonStyles = computed(() => {
-  const styles: CSSProperties = {}
-  
-  if (props.noPadding || props.padding === 'none') {
-    styles.padding = '0'
-    styles.margin = '0'
-    styles.minWidth = 'auto'
-    styles.minHeight = 'auto'
-  } else if (props.padding !== 'auto' && props.padding) {
-    styles.padding = typeof props.padding === 'number' ? `${props.padding}px` : props.padding
-  }
-  
-  if (props.customColor) {
-    styles['--wb-btn-custom-color'] = props.customColor
-    
-    if (props.variant === 'elevated') {
-      styles.backgroundColor = props.customColor
-      if (!props.textColor) {
-        const rgb = hexToRgb(props.customColor)
-        if (rgb) {
-          const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000
-          styles.color = brightness > 128 ? '#000000' : '#ffffff'
-        } else {
-          styles.color = '#ffffff'
-        }
-      }
-    } else if (props.variant === 'text' || props.variant === 'outlined') {
-      styles.backgroundColor = 'transparent'
-      if (!props.textColor) {
-        styles.color = props.customColor
-      }
-      if (props.variant === 'outlined' && !props.borderColor) {
-        styles.borderColor = props.customColor
-      }
-    } else if (props.variant === 'tonal') {
-      styles.backgroundColor = `color-mix(in srgb, ${props.customColor} 12%, transparent)`
-      if (!props.textColor) {
-        styles.color = props.customColor
-      }
-    } else {
-      styles.backgroundColor = props.customColor
-      if (!props.borderColor) {
-        styles.borderColor = props.customColor
-      }
-    }
-  }
-  
-  if (props.textColor) {
-    styles.color = props.textColor
-  }
-  
-  if (props.borderColor) {
-    styles.borderColor = props.borderColor
-    if (props.variant !== 'outlined' && props.variant !== 'text') {
-      styles.border = `1px solid ${props.borderColor}`
-    }
-  }
-  
-  if (props.animationDuration) styles['--wb-btn-animation-duration'] = `${props.animationDuration}ms`
-  if (props.style) {
-    if (typeof props.style === 'string') {
-      return { ...styles, cssText: props.style }
-    } else {
-      Object.assign(styles, props.style)
-    }
-  }
-  return styles
-})
-
-const spinnerStyles = computed(() => ({
-  width: props.size === 'xs' ? '12px' : 
-         props.size === 'sm' ? '14px' :
-         props.size === 'lg' ? '20px' :
-         props.size === 'xl' ? '22px' : '16px',
-  height: props.size === 'xs' ? '12px' : 
-          props.size === 'sm' ? '14px' :
-          props.size === 'lg' ? '20px' :
-          props.size === 'xl' ? '22px' : '16px'
-}))
-
-const iconStyles = computed(() => {
-  const styles: CSSProperties = {}
-  if (props.iconColor) {
-    styles.color = props.iconColor
-  }
-  return styles
-})
-
-const shouldShowLoadingText = computed(() => {
-  return props.showLoadingText && (props.loadingText || props.preserveText || slots.loading)
-})
-
-const displayLoadingText = computed(() => {
-  if (props.loadingText) return props.loadingText
-  if (props.preserveText) return slots.default?.()?.[0]?.children || ''
-  return ''
-})
-
-function getZoneStyles(zone: ClickZone): CSSProperties {
-  const [x, y, width, height] = zone.area
-  return {
-    position: 'absolute',
-    left: `${x}%`,
-    top: `${y}%`,
-    width: `${width}%`,
-    height: `${height}%`,
-    zIndex: '10',
-    background: 'transparent'
-  }
-}
-
-function getAdvancedClickData(event: MouseEvent): AdvancedClickEvent {
-  const rect = buttonRef.value?.getBoundingClientRect()
-  if (!rect) {
-    return {
-      originalEvent: event,
-      relativePosition: { x: 0, y: 0 },
-      quadrant: 1
-    }
-  }
-  const relativeX = (event.clientX - rect.left) / rect.width
-  const relativeY = (event.clientY - rect.top) / rect.height
-  const quadrant = relativeX < 0.5 
-    ? (relativeY < 0.5 ? 1 : 4)
-    : (relativeY < 0.5 ? 2 : 3)
-  return {
-    originalEvent: event,
-    relativePosition: { x: relativeX, y: relativeY },
-    quadrant: quadrant as 1 | 2 | 3 | 4
-  }
-}
-
-function handleClick(event: MouseEvent) {
-  if (props.disabled || props.loading) {
-    event.preventDefault()
-    return
-  }
-  if (props.ripple && !props.noPadding && buttonRef.value) {
-    const rect = buttonRef.value.getBoundingClientRect()
-    const x = event.clientX - rect.left
-    const y = event.clientY - rect.top
-    createRipple(x, y)
-  }
-  emit('click', event)
-  if (props.detectQuadrant || props.clickZones?.length) {
-    const advancedData = getAdvancedClickData(event)
-    emit('advancedClick', advancedData)
-  }
-}
-
-function handleZoneClick(zone: ClickZone, event: MouseEvent) {
-  if (!zone.active && zone.active !== undefined) return
-  event.stopPropagation()
-  const advancedData = getAdvancedClickData(event)
-  advancedData.zone = zone
-  emit('zoneClick', zone, advancedData)
-  zone.action(event)
-}
-
-function handleFocus(event: FocusEvent) {
-  emit('focus', event)
-}
-
-function handleBlur(event: FocusEvent) {
-  emit('blur', event)
-}
-
-function handleMouseEnter(event: MouseEvent) {
-  emit('mouseenter', event)
-}
-
-function handleMouseLeave(event: MouseEvent) {
-  emit('mouseleave', event)
-}
-
-watch(buttonRef, (newRef) => {
-  if (newRef && props.ripple) {
-    nextTick(() => {
-      rippleRef.value = newRef
-    })
-  }
-}, { immediate: true })
+const {
+  buttonRef,
+  computedTag,
+  isRouterLink,
+  buttonClasses,
+  buttonStyles,
+  spinnerStyles,
+  iconStyles,
+  shouldShowLoadingText,
+  displayLoadingText,
+  isLucideIcon,
+  getLucideComponent,
+  getIconSize,
+  getZoneStyles,
+  handleClick,
+  handleZoneClick,
+  handleFocus,
+  handleBlur,
+  handleMouseEnter,
+  handleMouseLeave,
+  focus,
+  blur,
+  createRipple
+} = useButton(props, emit)
 
 defineExpose({
   $el: buttonRef,
   createRipple,
-  focus: () => buttonRef.value?.focus(),
-  blur: () => buttonRef.value?.blur()
+  focus,
+  blur
 })
 </script>

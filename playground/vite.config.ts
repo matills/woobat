@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@': resolve(__dirname, '../src'),  // Point to the main library src
+      '@': resolve(__dirname, '../src'),
       'woobat-ui': resolve(__dirname, '../src')
     }
   },

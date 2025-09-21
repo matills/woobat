@@ -10,6 +10,7 @@ import type {
   ClickZone
 } from '@/types/global'
 
+export type { AdvancedClickEvent, ClickZone }
 export interface ButtonProps extends BaseComponentProps {
   variant?: ButtonVariant
   size?: ComponentSize
@@ -44,7 +45,7 @@ export interface ButtonProps extends BaseComponentProps {
   contentStyle?: CSSProperties | string
 }
 
-export interface ButtonEmits {
+export type ButtonEmits = {
   click: [event: MouseEvent]
   advancedClick: [event: AdvancedClickEvent]
   zoneClick: [zone: ClickZone, event: AdvancedClickEvent]
@@ -63,22 +64,22 @@ export interface ButtonSlots {
   spinner?: () => any
 }
 
-export const defaultButtonProps: Required<Omit<ButtonProps, keyof BaseComponentProps | 'href' | 'target' | 'to' | 'clickZones' | 'loadingText' | 'iconLeft' | 'iconRight' | 'contentClass' | 'contentStyle' | 'customColor' | 'textColor' | 'borderColor' | 'iconColor' | 'showLoadingText' | 'preserveText'>> = {
-  variant: 'filled',
-  size: 'md',
-  color: 'primary',
+export const defaultButtonProps = {
+  variant: 'filled' as const,
+  size: 'md' as const,
+  color: 'primary' as const,
   block: false,
-  rounded: true,
-  elevation: 0,
+  rounded: true as const,
+  elevation: 0 as const,
   loading: false,
   ripple: true,
   iconOnly: false,
-  padding: 'auto',
+  padding: 'auto' as const,
   noPadding: false,
-  tag: 'button',
-  type: 'button',
+  tag: 'button' as const,
+  type: 'button' as const,
   detectQuadrant: false,
-  clickAnimation: 'scale',
+  clickAnimation: 'scale' as const,
   animationDuration: 150,
   showLoadingText: true,
   preserveText: false

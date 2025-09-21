@@ -33,6 +33,8 @@ global.getComputedStyle = vi.fn(() => ({
   getPropertyValue: vi.fn(() => ''),
   setProperty: vi.fn(),
   removeProperty: vi.fn(),
+  position: 'static',
+  overflow: 'visible',
   accentColor: '',
   alignContent: '',
   alignItems: '',

@@ -361,17 +361,17 @@
         </div>
         
         <div class="example-group">
-          <h5>Loading States Avanzados</h5>
-          <p class="example-description">Control completo sobre el estado de carga con diferentes opciones de texto</p>
+          <h5>Advanced Loading States</h5>
+          <p class="example-description">Complete control over loading state with different text options</p>
           <div class="example-row">
-            <wb-btn loading loading-text="Procesando...">Con Texto Personalizado</wb-btn>
-            <wb-btn loading preserve-text>Mantener Texto Original</wb-btn>
-            <wb-btn loading :show-loading-text="false">Solo Animación</wb-btn>
-            <wb-btn loading loading-text="Guardando..." custom-color="#10b981">Personalizado</wb-btn>
+            <wb-btn loading loading-text="Processing...">With Custom Text</wb-btn>
+            <wb-btn loading preserve-text>Preserve Original Text</wb-btn>
+            <wb-btn loading :show-loading-text="false">Animation Only</wb-btn>
+            <wb-btn loading loading-text="Saving..." custom-color="#10b981">Custom</wb-btn>
           </div>
           <div class="example-code-section">
-            <code>&lt;wb-btn loading preserve-text&gt;Mantener Texto&lt;/wb-btn&gt;</code>
-            <button @click="copyExample('&lt;wb-btn loading preserve-text&gt;Mantener Texto&lt;/wb-btn&gt;')" class="copy-btn">
+            <code>&lt;wb-btn loading preserve-text&gt;Preserve Text&lt;/wb-btn&gt;</code>
+            <button @click="copyExample('&lt;wb-btn loading preserve-text&gt;Preserve Text&lt;/wb-btn&gt;')" class="copy-btn">
               <Copy :size="16" />
               Copy
             </button>
@@ -379,16 +379,16 @@
         </div>
         
         <div class="example-group">
-          <h5>Detección de Cuadrantes</h5>
-          <p class="example-description">Detecta en qué cuadrante del botón se hizo clic para interacciones avanzadas</p>
+          <h5>Quadrant Detection</h5>
+          <p class="example-description">Detect which quadrant of the button was clicked for advanced interactions</p>
           <div class="example-row">
-            <wb-btn detect-quadrant @advanced-click="handleAdvancedClick">Detectar Cuadrante</wb-btn>
+            <wb-btn detect-quadrant @advanced-click="handleAdvancedClick">Detect Quadrant</wb-btn>
             <wb-btn detect-quadrant variant="outlined" @advanced-click="handleAdvancedClick">Outlined</wb-btn>
             <wb-btn detect-quadrant size="lg" @advanced-click="handleAdvancedClick">Large</wb-btn>
           </div>
           <div class="example-code-section">
-            <code>&lt;wb-btn detect-quadrant @advanced-click="handleClick"&gt;Detectar&lt;/wb-btn&gt;</code>
-            <button @click="copyExample('&lt;wb-btn detect-quadrant @advanced-click=&quot;handleClick&quot;&gt;Detectar&lt;/wb-btn&gt;')" class="copy-btn">
+            <code>&lt;wb-btn detect-quadrant @advanced-click="handleClick"&gt;Detect&lt;/wb-btn&gt;</code>
+            <button @click="copyExample('&lt;wb-btn detect-quadrant @advanced-click=&quot;handleClick&quot;&gt;Detect&lt;/wb-btn&gt;')" class="copy-btn">
               <Copy :size="16" />
               Copy
             </button>
@@ -396,17 +396,17 @@
         </div>
         
         <div class="example-group">
-          <h5>Animaciones Personalizadas</h5>
-          <p class="example-description">Controla la duración y tipo de animación al hacer clic</p>
+          <h5>Custom Animations</h5>
+          <p class="example-description">Control duration and type of click animation</p>
           <div class="example-row">
-            <wb-btn click-animation="scale" animation-duration="100">Rápida</wb-btn>
-            <wb-btn click-animation="pulse" animation-duration="500">Lenta</wb-btn>
+            <wb-btn click-animation="scale" animation-duration="100">Fast</wb-btn>
+            <wb-btn click-animation="pulse" animation-duration="500">Slow</wb-btn>
             <wb-btn click-animation="bounce" animation-duration="300">Bounce</wb-btn>
             <wb-btn click-animation="shake" animation-duration="200">Shake</wb-btn>
           </div>
           <div class="example-code-section">
-            <code>&lt;wb-btn click-animation="pulse" animation-duration="500"&gt;Lenta&lt;/wb-btn&gt;</code>
-            <button @click="copyExample('&lt;wb-btn click-animation=&quot;pulse&quot; animation-duration=&quot;500&quot;&gt;Lenta&lt;/wb-btn&gt;')" class="copy-btn">
+            <code>&lt;wb-btn click-animation="pulse" animation-duration="500"&gt;Slow&lt;/wb-btn&gt;</code>
+            <button @click="copyExample('&lt;wb-btn click-animation=&quot;pulse&quot; animation-duration=&quot;500&quot;&gt;Slow&lt;/wb-btn&gt;')" class="copy-btn">
               <Copy :size="16" />
               Copy
             </button>
@@ -414,16 +414,16 @@
         </div>
         
         <div class="example-group">
-          <h5>Estilos de Contenido Personalizados</h5>
-          <p class="example-description">Aplica clases CSS y estilos inline al contenido del botón</p>
+          <h5>Custom Content Styles</h5>
+          <p class="example-description">Apply CSS classes and inline styles to button content</p>
           <div class="example-row">
             <wb-btn content-class="custom-content" content-style="font-weight: bold; text-transform: uppercase">Bold Uppercase</wb-btn>
             <wb-btn content-style="letter-spacing: 2px; font-size: 14px">Spaced Text</wb-btn>
             <wb-btn content-class="gradient-text" content-style="background: linear-gradient(45deg, #ff6b35, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent">Gradient Text</wb-btn>
           </div>
           <div class="example-code-section">
-            <code>&lt;wb-btn content-style="font-weight: bold; text-transform: uppercase"&gt;Estilo&lt;/wb-btn&gt;</code>
-            <button @click="copyExample('&lt;wb-btn content-style=&quot;font-weight: bold; text-transform: uppercase&quot;&gt;Estilo&lt;/wb-btn&gt;')" class="copy-btn">
+            <code>&lt;wb-btn content-style="font-weight: bold; text-transform: uppercase"&gt;Style&lt;/wb-btn&gt;</code>
+            <button @click="copyExample('&lt;wb-btn content-style=&quot;font-weight: bold; text-transform: uppercase&quot;&gt;Style&lt;/wb-btn&gt;')" class="copy-btn">
               <Copy :size="16" />
               Copy
             </button>
@@ -431,17 +431,17 @@
         </div>
         
         <div class="example-group">
-          <h5>Botones Sin Padding</h5>
-          <p class="example-description">Botones sin padding (automáticamente sin ripple) ideales para enlaces inline</p>
+          <h5>No Padding Buttons</h5>
+          <p class="example-description">Buttons without padding (automatically no ripple) ideal for inline links</p>
           <div class="example-row">
-            <wb-btn no-padding variant="text">Enlace Inline</wb-btn>
-            <wb-btn no-padding variant="text" icon-left="arrow-right">Con Icono</wb-btn>
-            <wb-btn no-padding variant="text" custom-color="#ef4444">Color Personalizado</wb-btn>
-            <wb-btn no-padding variant="text" :ripple="true">Con Ripple Forzado</wb-btn>
+            <wb-btn no-padding variant="text">Inline Link</wb-btn>
+            <wb-btn no-padding variant="text" icon-left="arrow-right">With Icon</wb-btn>
+            <wb-btn no-padding variant="text" custom-color="#ef4444">Custom Color</wb-btn>
+            <wb-btn no-padding variant="text" :ripple="true">With Forced Ripple</wb-btn>
           </div>
           <div class="example-code-section">
-            <code>&lt;wb-btn no-padding variant="text"&gt;Enlace Inline&lt;/wb-btn&gt;</code>
-            <button @click="copyExample('&lt;wb-btn no-padding variant=&quot;text&quot;&gt;Enlace Inline&lt;/wb-btn&gt;')" class="copy-btn">
+            <code>&lt;wb-btn no-padding variant="text"&gt;Inline Link&lt;/wb-btn&gt;</code>
+            <button @click="copyExample('&lt;wb-btn no-padding variant=&quot;text&quot;&gt;Inline Link&lt;/wb-btn&gt;')" class="copy-btn">
               <Copy :size="16" />
               Copy
             </button>
@@ -449,20 +449,20 @@
         </div>
         
         <div class="example-group">
-          <h5>Zonas de Clic Avanzadas</h5>
-          <p class="example-description">Define áreas específicas clickeables dentro del botón para interacciones complejas</p>
+          <h5>Advanced Click Zones</h5>
+          <p class="example-description">Define specific clickable areas within the button for complex interactions</p>
           <div class="example-row">
             <wb-btn 
               :click-zones="clickZonesExample" 
               @zone-click="handleZoneClick"
               style="position: relative; width: 200px; height: 50px;"
             >
-              Botón con Zonas
+              Button with Zones
             </wb-btn>
           </div>
           <div class="example-code-section">
-            <code>&lt;wb-btn :click-zones="zones" @zone-click="handleZone"&gt;Zonas&lt;/wb-btn&gt;</code>
-            <button @click="copyExample('&lt;wb-btn :click-zones=&quot;zones&quot; @zone-click=&quot;handleZone&quot;&gt;Zonas&lt;/wb-btn&gt;')" class="copy-btn">
+            <code>&lt;wb-btn :click-zones="zones" @zone-click="handleZone"&gt;Zones&lt;/wb-btn&gt;</code>
+            <button @click="copyExample('&lt;wb-btn :click-zones=&quot;zones&quot; @zone-click=&quot;handleZone&quot;&gt;Zones&lt;/wb-btn&gt;')" class="copy-btn">
               <Copy :size="16" />
               Copy
             </button>
@@ -808,7 +808,7 @@ const handleZoneClick = (zone: any, event: any) => {
 const clickZonesExample = [
   {
     id: 'left-zone',
-    area: [0, 0, 50, 100], // x, y, width, height percentages
+    area: [0, 0, 50, 100],
     action: (e: MouseEvent) => console.log('Left zone clicked'),
     active: true
   },
