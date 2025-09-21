@@ -1,7 +1,6 @@
 import { ref, computed, watch, inject, onMounted, readonly } from 'vue'
 import type { Ref, ComputedRef } from 'vue'
 import type { WoobatOptions } from '@/types/global'
-import { isBrowser, setCSSCustomProperty, getCSSCustomProperty, dispatchCustomEvent } from '@/utils/domUtils'
 
 const globalTheme = ref<'light' | 'dark'>('light')
 

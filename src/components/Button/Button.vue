@@ -115,7 +115,6 @@
 </template>
 
 <script setup lang="ts">
-import { useSlots } from 'vue'
 import type { 
   ButtonProps, 
   ButtonEmits,
@@ -126,7 +125,6 @@ import { useButton } from './useButton'
 
 const props = withDefaults(defineProps<ButtonProps>(), defaultButtonProps)
 const emit = defineEmits<ButtonEmits>()
-const slots = useSlots()
 defineSlots<ButtonSlots>()
 
 const {
@@ -152,7 +150,7 @@ const {
   focus,
   blur,
   createRipple
-} = useButton(props, emit)
+} = useButton(props, emit as any)
 
 defineExpose({
   $el: buttonRef,
