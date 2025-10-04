@@ -1,0 +1,34 @@
+{
+  "name": "woobat",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "UI library for Vue 3.",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/woobat.umd.cjs",
+  "module": "./dist/woobat.js",
+  "exports": {
+    ".": {
+      "import": "./dist/woobat.js",
+      "require": "./dist/woobat.umd.cjs"
+    }
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0",
+    "vue": "^3.5.0",
+    "vue-tsc": "^2.2.12"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview"
+  }
+}

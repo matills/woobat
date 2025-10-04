@@ -1,0 +1,15 @@
+/node_modules
+/pnpm-lock.yaml # Si usas pnpm
+/yarn.lock    # Si usas yarn
+/package-lock.json # Si usas npm
+/dist 
+.vite/ 
+.vscode/ # Configuración del editor (excepto settings.json si es relevante)
+.idea/   # WebStorm / JetBrains
+*.local # Archivos de entorno local
+/temp
+/coverage    # Resultados de pruebas (Vitest/Jest)
+/storybook-static 
+.storybook-cache
+/docs/.vitepress/cache
+/docs/.vitepress/dist
