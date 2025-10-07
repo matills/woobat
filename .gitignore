@@ -16,3 +16,6 @@ dist-ssr
 *.log*
 pnpm-debug.log*
 lerna-debug.log*
+
+/dev
+index.html
