@@ -1,2 +1,9 @@
-export { default as Button } from './Button'
-export type * from './Button'
+import Alert from './Alert'
+import Button from './Button'
+
+export { Alert, Button }
+
+export default {
+  Alert,
+  Button
+}

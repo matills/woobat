@@ -1,18 +1,23 @@
-import './styles/index.css'
-export { default, WoobatUI } from './plugin'
-export * from './components'
+import type { App } from 'vue'
+import { Alert, Button } from './components'
 
-// Composables
-export { useTheme, useCurrentTheme } from './composables/useTheme'
-export { useRipple } from './composables/useRipple'
-export type { UseThemeReturn } from './composables/useTheme'
-export type { UseRippleReturn, RippleOptions } from './composables/useRipple'
+const components = {
+  'wb-alert': Alert,
+  'wb-button': Button
+}
 
-// Utilities
-export * from './utils/iconLoader'
-export * from './utils/colorUtils'
-export * from './utils/domUtils'
+export { Alert, Button }
+export * from './types'
+export * from './utils'
+export * from './constants'
+export * from './composables'
+export * from './components/Alert/icons'
+export * from './components/Button/icons'
 
-// Types
-export type * from './types/global'
-export type * from './components/Button/Button.types'
+export default {
+  install(app: App) {
+    Object.entries(components).forEach(([name, component]) => {
+      app.component(name, component)
+    })
+  }
+}

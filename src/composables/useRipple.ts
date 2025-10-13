@@ -143,7 +143,6 @@ export function useRipple(options: RippleOptions = {}): UseRippleReturn {
     if (!element) return
     element.addEventListener('mousedown', handlePointerDown, { passive: true })
     element.addEventListener('touchstart', handlePointerDown, { passive: true })
-    element.addEventListener('selectstart', (e) => e.preventDefault())
   }
 
   function cleanupEventListeners() {
@@ -151,7 +150,6 @@ export function useRipple(options: RippleOptions = {}): UseRippleReturn {
     if (!element) return
     element.removeEventListener('mousedown', handlePointerDown)
     element.removeEventListener('touchstart', handlePointerDown)
-    element.removeEventListener('selectstart', (e) => e.preventDefault())
   }
 
   onMounted(() => {
@@ -172,15 +170,3 @@ export function useRipple(options: RippleOptions = {}): UseRippleReturn {
     clearRipples
   }
 }
-
-export const rippleCSS = `
-.wb-ripple {
-  --wb-ripple-color: currentColor;
-  --wb-ripple-opacity: 0.3;
-  --wb-ripple-duration: 600ms;
-}
-
-[data-wb-theme="dark"] .wb-ripple {
-  --wb-ripple-opacity: 0.2;
-}
-`

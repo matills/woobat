@@ -1,2 +1,3 @@
-export { default } from './Button.vue'
-export type * from './Button.types'
+import Button from './Button.vue'
+
+export default Button
