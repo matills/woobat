@@ -1,4 +1,5 @@
 import type { Component } from 'vue'
+import type { BaseComponentProps } from './base'
 
 export type AlertVariant = 'color' | 'outlined' | 'border'
 
@@ -6,7 +7,7 @@ export type AlertType = 'success' | 'error' | 'warning' | 'info' | 'custom'
 
 export type BorderPosition = 'top' | 'right' | 'bottom' | 'left'
 
-export interface AlertProps {
+export interface AlertProps extends BaseComponentProps {
   variant?: AlertVariant
   type?: AlertType
   border?: BorderPosition

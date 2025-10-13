@@ -1,15 +1,18 @@
 import type { App } from 'vue'
-import { Alert } from './components'
+import { Alert, Button } from './components'
 
 const components = {
-  'wb-alert': Alert
+  'wb-alert': Alert,
+  'wb-button': Button
 }
 
-export { Alert }
+export { Alert, Button }
 export * from './types'
-export * from './utils/colors'
+export * from './utils'
 export * from './constants'
+export * from './composables'
 export * from './components/Alert/icons'
+export * from './components/Button/icons'
 
 export default {
   install(app: App) {
