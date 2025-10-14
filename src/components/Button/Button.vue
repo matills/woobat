@@ -11,58 +11,41 @@
     :disabled="isDisabled"
     @click="handleClick"
   >
-    <div v-if="loading" class="wb-btn__loading-overlay">
-      <div class="wb-btn__spinner">
-        <LoadingIcon />
-      </div>
-      <span v-if="showLoadingText" class="wb-btn__loading-text">
-        {{ loadingText || 'Loading...' }}
-      </span>
-    </div>
+    <ButtonLoading
+      v-if="loading"
+      :show-text="showLoadingText"
+      :text="loadingText"
+    />
 
-    <span 
-      :class="['wb-btn__content', contentClass, { 'wb-btn__content--hidden': loading && !preserveText }]"
-      :style="mergedContentStyle"
+    <ButtonContent
+      :visible="!loading || preserveText"
+      :icon-left="iconLeft"
+      :icon-right="iconRight"
+      :icon-only="iconOnly"
+      :content-class="contentClass"
+      :content-style="mergedContentStyle"
     >
-      <span v-if="iconLeft && !iconOnly" class="wb-btn__icon wb-btn__icon--left">
-        <component v-if="isComponent(iconLeft)" :is="iconLeft" />
-        <i v-else :class="iconLeft" />
-      </span>
+      <slot />
+    </ButtonContent>
 
-      <span v-if="!iconOnly" class="wb-btn__text">
-        <slot />
-      </span>
-
-      <span v-if="iconRight && !iconOnly" class="wb-btn__icon wb-btn__icon--right">
-        <component v-if="isComponent(iconRight)" :is="iconRight" />
-        <i v-else :class="iconRight" />
-      </span>
-
-      <span v-if="iconOnly && (iconLeft || iconRight)" class="wb-btn__icon">
-        <component v-if="isComponent(iconLeft || iconRight)" :is="(iconLeft || iconRight) as Component" />
-        <i v-else :class="(iconLeft || iconRight) as string" />
-      </span>
-    </span>
-
-    <div v-if="clickZones && clickZones.length" class="wb-btn__zones">
-      <div
-        v-for="(zone, index) in clickZones"
-        :key="index"
-        :class="`wb-btn__zone wb-btn__zone--${zone.area}`"
-        @click.stop="handleZoneClick(zone, $event)"
-      />
-    </div>
+    <ButtonZones
+      v-if="clickZones?.length"
+      :zones="clickZones"
+      @zone-click="handleZoneClick"
+    />
   </component>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import type { Component } from 'vue'
+import { computed, watch } from 'vue'
 import type { ButtonProps, ButtonEmits } from '@/types'
-import { BUTTON_COLORS, BUTTON_SIZES, BUTTON_ROUNDED, BUTTON_ELEVATION } from '@/constants'
-import { addOpacity, parsePadding, mergeStyles } from '@/utils'
+import { useButtonAnimation } from '@/composables/button/useButtonAnimation'
+import { useButtonStyles } from '@/composables/button/useButtonStyles'
+import { useButtonComponent } from '@/composables/button/useButtonComponent'
 import { useRipple } from '@/composables'
-import { LoadingIcon } from './icons'
+import ButtonLoading from '@/components/Button/ButtonLoading.vue'
+import ButtonContent from '@/components/Button/ButtonContent.vue'
+import ButtonZones from '@/components/Button/ButtonZones.vue'
 
 defineOptions({
   name: 'wb-button'
@@ -83,7 +66,9 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 
 const emit = defineEmits<ButtonEmits>()
 
-const isAnimating = ref(false)
+const { isAnimating, triggerAnimation } = useButtonAnimation(props)
+const { buttonStyles, mergedContentStyle } = useButtonStyles(props)
+const { componentTag, isRouterLink, isDisabled } = useButtonComponent(props)
 
 const { rippleRef, setEnabled } = useRipple({
   color: 'rgba(255, 255, 255, 0.5)',
@@ -91,39 +76,9 @@ const { rippleRef, setEnabled } = useRipple({
   opacity: 0.3
 })
 
-watch(() => props.ripple, (newVal) => {
-  setEnabled(newVal)
-}, { immediate: true })
-
-watch(() => props.disabled, (newVal) => {
-  if (newVal) setEnabled(false)
-  else if (props.ripple) setEnabled(true)
-})
-
-const componentTag = computed(() => {
-  if (props.tag === 'a' && props.href) return 'a'
-  if ((props.tag === 'router-link' || props.tag === 'nuxt-link') && props.to) return props.tag
-  return 'button'
-})
-
-const isRouterLink = computed(() => {
-  return componentTag.value === 'router-link' || componentTag.value === 'nuxt-link'
-})
-
-const isDisabled = computed(() => {
-  return props.disabled || props.loading
-})
-
-const baseColor = computed(() => {
-  if (props.customColor) return props.customColor
-  if (props.color === 'custom') return BUTTON_COLORS.primary
-  return BUTTON_COLORS[props.color]
-})
-
-const finalTextColor = computed(() => {
-  if (props.textColor) return props.textColor
-  if (props.variant === 'filled' || props.variant === 'elevated') return '#ffffff'
-  return baseColor.value
+watch(() => props.ripple, setEnabled, { immediate: true })
+watch(() => props.disabled, (disabled) => {
+  setEnabled(!disabled && props.ripple)
 })
 
 const buttonClasses = computed(() => {
@@ -140,66 +95,21 @@ const buttonClasses = computed(() => {
   return classes
 })
 
-const buttonStyles = computed(() => {
-  const sizeConfig = BUTTON_SIZES[props.size]
-  const styles: Record<string, any> = {
-    borderRadius: BUTTON_ROUNDED[props.rounded],
-    boxShadow: BUTTON_ELEVATION[props.elevation]
-  }
+const detectClickZone = (event: MouseEvent): string => {
+  const button = event.currentTarget as HTMLElement
+  const rect = button.getBoundingClientRect()
+  const x = event.clientX - rect.left
+  const y = event.clientY - rect.top
+  const centerX = rect.width / 2
+  const centerY = rect.height / 2
   
-  if (props.noPadding || props.padding === 'none') {
-    styles.padding = '0'
-  } else if (props.padding) {
-    styles.padding = parsePadding(props.padding)
-  } else if (!props.iconOnly) {
-    styles.padding = sizeConfig.padding
-  }
-  
-  if (!props.iconOnly) {
-    styles.fontSize = sizeConfig.fontSize
-    styles.height = sizeConfig.height
-  } else {
-    const size = sizeConfig.height
-    styles.width = size
-    styles.height = size
-  }
-  
-  if (props.variant === 'filled') {
-    styles.backgroundColor = baseColor.value
-    styles.color = finalTextColor.value
-  } else if (props.variant === 'outlined') {
-    styles.backgroundColor = 'transparent'
-    styles.color = finalTextColor.value
-    styles.border = `1px solid ${props.borderColor || baseColor.value}`
-  } else if (props.variant === 'text') {
-    styles.backgroundColor = 'transparent'
-    styles.color = finalTextColor.value
-  } else if (props.variant === 'elevated') {
-    styles.backgroundColor = baseColor.value
-    styles.color = finalTextColor.value
-    styles.boxShadow = BUTTON_ELEVATION[3]
-  } else if (props.variant === 'tonal') {
-    styles.backgroundColor = addOpacity(baseColor.value, 0.12)
-    styles.color = baseColor.value
-  }
-  
-  return mergeStyles(styles, props.style)
-})
-
-const mergedContentStyle = computed(() => {
-  if (props.contentStyle) {
-    return typeof props.contentStyle === 'string' 
-      ? props.contentStyle 
-      : props.contentStyle
-  }
-  return {}
-})
-
-const isComponent = (icon: Component | string | undefined): icon is Component => {
-  return typeof icon === 'object' || typeof icon === 'function'
+  if (x < centerX && y < centerY) return 'top-left'
+  if (x >= centerX && y < centerY) return 'top-right'
+  if (x < centerX && y >= centerY) return 'bottom-left'
+  return 'bottom-right'
 }
 
-const handleClick = (event: MouseEvent) => {
+const handleClick = (event: MouseEvent): void => {
   if (isDisabled.value) return
   
   if (props.clickAnimation !== 'none') {
@@ -214,30 +124,8 @@ const handleClick = (event: MouseEvent) => {
   }
 }
 
-const handleZoneClick = (zone: ClickZone, event: MouseEvent) => {
-  zone.action()
-  emit('zone-click', zone.area, event)
-}
-
-const triggerAnimation = () => {
-  isAnimating.value = true
-  setTimeout(() => {
-    isAnimating.value = false
-  }, props.animationDuration)
-}
-
-const detectClickZone = (event: MouseEvent): string => {
-  const button = event.currentTarget as HTMLElement
-  const rect = button.getBoundingClientRect()
-  const x = event.clientX - rect.left
-  const y = event.clientY - rect.top
-  const centerX = rect.width / 2
-  const centerY = rect.height / 2
-  
-  if (x < centerX && y < centerY) return 'top-left'
-  if (x >= centerX && y < centerY) return 'top-right'
-  if (x < centerX && y >= centerY) return 'bottom-left'
-  return 'bottom-right'
+const handleZoneClick = (zone: string, event: MouseEvent): void => {
+  emit('zone-click', zone, event)
 }
 
 defineExpose({
@@ -293,99 +181,6 @@ defineExpose({
   background-color: rgba(0, 0, 0, 0.04);
 }
 
-.wb-btn__content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  position: relative;
-  z-index: 1;
-  transition: opacity 0.2s ease;
-}
-
-.wb-btn__content--hidden {
-  opacity: 0;
-}
-
-.wb-btn__loading-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  z-index: 2;
-}
-
-.wb-btn__spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.wb-btn__spinner :deep(svg) {
-  width: 1.25em;
-  height: 1.25em;
-}
-
-.wb-btn__loading-text {
-  font-size: 0.875em;
-}
-
-.wb-btn__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.wb-btn__icon :deep(svg) {
-  width: 1.25em;
-  height: 1.25em;
-}
-
-.wb-btn__text {
-  white-space: nowrap;
-}
-
-.wb-btn__zones {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-}
-
-.wb-btn__zone {
-  cursor: pointer;
-}
-
-.wb-btn__zone--top-left {
-  grid-column: 1;
-  grid-row: 1;
-}
-
-.wb-btn__zone--top-right {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.wb-btn__zone--bottom-left {
-  grid-column: 1;
-  grid-row: 2;
-}
-
-.wb-btn__zone--bottom-right {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.wb-btn__zone--center {
-  grid-column: 1 / -1;
-  grid-row: 1 / -1;
-}
-
 .wb-btn--animation-scale.wb-btn--animating {
   animation: scale-animation 0.15s ease;
 }
@@ -421,14 +216,5 @@ defineExpose({
 @keyframes bounce-animation {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-5px); }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }
 </style>

@@ -12,6 +12,12 @@ export interface BaseComponentProps {
   style?: Record<string, any> | string
 }
 
-export interface ComponentEmits {
+export interface BaseComponentEmits {
   (e: 'click', event: MouseEvent): void
+}
+
+export interface SizeConfig {
+  padding: string
+  fontSize: string
+  height: string
 }

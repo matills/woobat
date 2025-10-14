@@ -4,24 +4,39 @@ export const parsePadding = (padding: string | number | 'none'): string => {
   return padding
 }
 
-export const mergeStyles = (...styles: (Record<string, any> | string | undefined)[]): Record<string, any> => {
-  const merged: Record<string, any> = {}
+const toCamelCase = (str: string): string => 
+  str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
+
+const parseStyleRule = (rule: string): [string, string] | null => {
+  const [key, value] = rule.split(':').map(s => s.trim())
+  if (!key || !value) return null
+  return [toCamelCase(key), value]
+}
+
+const parseStringStyle = (style: string): Record<string, any> => {
+  const result: Record<string, any> = {}
   
-  styles.forEach(style => {
-    if (!style) return
-    
-    if (typeof style === 'string') {
-      style.split(';').forEach(rule => {
-        const [key, value] = rule.split(':').map(s => s.trim())
-        if (key && value) {
-          const camelKey = key.replace(/-([a-z])/g, g => g[1].toUpperCase())
-          merged[camelKey] = value
-        }
-      })
-    } else {
-      Object.assign(merged, style)
+  style.split(';').forEach(rule => {
+    const parsed = parseStyleRule(rule)
+    if (parsed) {
+      const [key, value] = parsed
+      result[key] = value
     }
   })
   
-  return merged
+  return result
+}
+
+export const mergeStyles = (
+  ...styles: (Record<string, any> | string | undefined)[]
+): Record<string, any> => {
+  return styles.reduce<Record<string, any>>((merged, style) => {
+    if (!style) return merged
+    
+    const parsed = typeof style === 'string' 
+      ? parseStringStyle(style) 
+      : style
+    
+    return { ...merged, ...parsed }
+  }, {})
 }
