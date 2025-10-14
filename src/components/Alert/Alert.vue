@@ -2,19 +2,15 @@
   <div
     v-if="isVisible"
     class="alert"
-    :class="{ 'alert--center': center }"
-    :style="{
-      backgroundColor: backgroundColor,
-      color: finalColorText,
-      padding: padding || '1rem',
-      [borderPosition]: borderStyle
-    }"
+    :class="alertClasses"
+    :style="alertStyles"
   >
     <div class="alert__content">
-      <div v-if="showIcon" class="alert__icon">
-        <component v-if="customIcon" :is="customIcon" />
-        <component v-else-if="type !== 'custom'" :is="ALERT_TYPE_ICONS[type]" />
-      </div>
+      <AlertIcon
+        v-if="showIcon"
+        :type="type"
+        :custom-icon="customIcon"
+      />
       <div class="alert__body" :class="{ 'alert__body--center': center }">
         <div class="alert__title">{{ finalTitle }}</div>
         <div class="alert__message">
@@ -22,22 +18,21 @@
         </div>
       </div>
     </div>
-    <button
+    <AlertClose
       v-if="closable"
-      class="alert__close"
-      :style="{ color: finalColorText }"
-      @click="handleClose"
-    >
-      ✕
-    </button>
+      :color="finalColorText"
+      @close="handleCloseClick"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import type { AlertProps, AlertEmits } from '@/types'
-import { ALERT_TYPE_COLORS, ALERT_TYPE_ICONS } from '@/constants'
-import { addOpacity } from '@/utils/colors'
+import { ALERT_TYPE_ICONS } from '@/constants'
+import { useAlert } from '@/composables/alert/useAlert'
+import AlertIcon from '@/components/Alert/AlertIcon.vue'
+import AlertClose from '@/components/Alert/AlertClose.vue'
 
 defineOptions({
   name: 'wb-alert'
@@ -54,56 +49,32 @@ const props = withDefaults(defineProps<AlertProps>(), {
 
 const emit = defineEmits<AlertEmits>()
 
-const isVisible = ref(true)
+const {
+  isVisible,
+  finalColorText,
+  finalTitle,
+  backgroundColor,
+  borderStyle,
+  borderPosition,
+  showIcon,
+  handleClose
+} = useAlert(props)
 
-const finalColor = computed(() => {
-  return props.color || ALERT_TYPE_COLORS[props.type]
+const alertClasses = computed(() => {
+  const classes = ['alert']
+  if (props.center) classes.push('alert--center')
+  return classes
 })
 
-const finalColorText = computed(() => {
-  if (props.colorText) return props.colorText
-  return props.variant === 'color' ? '#ffffff' : finalColor.value
-})
+const alertStyles = computed(() => ({
+  backgroundColor: backgroundColor.value,
+  color: finalColorText.value,
+  padding: props.padding || '1rem',
+  [borderPosition.value]: borderStyle.value
+}))
 
-const finalTitle = computed(() => {
-  if (props.title) return props.title
-  return props.type.charAt(0).toUpperCase() + props.type.slice(1)
-})
-
-const backgroundColor = computed(() => {
-  if (props.variant === 'color') return finalColor.value
-  if (props.variant === 'outlined') return 'transparent'
-  return addOpacity(finalColor.value, 0.1)
-})
-
-const borderStyle = computed(() => {
-  if (props.variant === 'outlined') {
-    return `1px solid ${finalColor.value}`
-  }
-  if (props.variant === 'border') {
-    const borders = {
-      top: `3px solid ${finalColor.value}`,
-      right: `3px solid ${finalColor.value}`,
-      bottom: `3px solid ${finalColor.value}`,
-      left: `3px solid ${finalColor.value}`
-    }
-    return borders[props.border!]
-  }
-  return 'none'
-})
-
-const borderPosition = computed(() => {
-  if (props.variant === 'outlined') return 'border'
-  if (props.variant === 'border') return `border-${props.border}`
-  return ''
-})
-
-const showIcon = computed(() => {
-  return props.icon || props.customIcon
-})
-
-const handleClose = () => {
-  isVisible.value = false
+const handleCloseClick = (): void => {
+  handleClose()
   emit('close')
 }
 
@@ -133,22 +104,6 @@ defineExpose({
   align-items: flex-start;
 }
 
-.alert__icon {
-  font-size: 1.25rem;
-  font-weight: bold;
-  flex-shrink: 0;
-  width: 1.5rem;
-  height: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.alert__icon :deep(svg) {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
 .alert__body {
   flex: 1;
 }
@@ -166,26 +121,5 @@ defineExpose({
 .alert__message {
   font-size: 0.875rem;
   line-height: 1.5;
-}
-
-.alert__close {
-  background: none;
-  border: none;
-  font-size: 1.25rem;
-  cursor: pointer;
-  padding: 0;
-  margin-left: 1rem;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-  flex-shrink: 0;
-  width: 1.5rem;
-  height: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.alert__close:hover {
-  opacity: 1;
 }
 </style>
