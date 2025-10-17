@@ -1,10 +1,11 @@
 import type { App } from 'vue'
-import { Alert, Button, Avatar } from './components'
+import { Alert, Button, Avatar, Badge } from './components'
 
 const components = {
   'wb-alert': Alert,
   'wb-button': Button,
   'wb-avatar': Avatar,
+  'wb-badge': Badge,
 }
 
 export { Alert, Button, Avatar }
